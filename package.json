@@ -1,0 +1,28 @@
+{
+  "name": "pmpos-modules",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "Emre Eren <emreeren@gmail.com> (sambapos.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^9.6.5",
+    "typescript": "^2.8.1"
+  },
+  "dependencies": {
+    "immutable": "^4.0.0-rc.9",
+    "lodash": "^4.17.5",
+    "shortid": "^2.2.8",
+    "y-array": "^11.0.0-5",
+    "y-indexeddb": "^9.0.0-5",
+    "y-map": "^11.0.0-1",
+    "y-memory": "^9.0.0-1",
+    "y-websockets-client": "^9.0.0-4",
+    "yjs": "^13.0.0-55"
+  }
+}

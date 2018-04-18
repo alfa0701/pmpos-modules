@@ -1,0 +1,43 @@
+import { List, Map as IMap, Set as ISet } from 'immutable';
+import { CommitRecord, Commit, CardRecord, CardTypeRecord, TagTypeRecord, ActionRecord, CardTagData, CardTagRecord } from 'pmpos-models';
+export declare class CardList {
+    commits: IMap<string, List<CommitRecord>>;
+    cards: IMap<string, CardRecord>;
+    cardTypes: IMap<string, CardTypeRecord>;
+    tagTypes: IMap<string, TagTypeRecord>;
+    otherIndex: IMap<string, ISet<string>>;
+    constructor();
+    setCardTypes(cardTypes: IMap<string, CardTypeRecord>): void;
+    setTagTypes(tagTypes: IMap<string, TagTypeRecord>): void;
+    readConcurrencyData(actionType: string, card: CardRecord, actionData: any): any;
+    applyAction(card: CardRecord | undefined, action: ActionRecord, executeRules?: boolean): CardRecord;
+    canApplyAction(card: CardRecord, action: ActionRecord): boolean;
+    actionReduce: (card: CardRecord, action: ActionRecord) => CardRecord;
+    commitReduce: (card: CardRecord, commit: CommitRecord) => CardRecord;
+    addCommits(commits: Commit[]): void;
+    getCards(): IMap<string, CardRecord>;
+    getCardTypes(): IMap<string, CardTypeRecord>;
+    reduceTags(card: CardRecord, list: List<CardTagData>, filters: string[]): any;
+    getTags(filters: string[]): List<CardTagData>;
+    getTagsFrom(filters: string[], cards: IMap<string, CardRecord>): List<CardTagData>;
+    getCardsByType(typeId: string): List<CardRecord>;
+    getCardTypeIdByRef(ref: string): string;
+    getCardTypeByRef(ref: string): CardTypeRecord | undefined;
+    getCardType(id: string): CardTypeRecord | undefined;
+    getRootCardTypes(): string[];
+    private getSubCardTypes();
+    private pushSubCardTypes(cardType, result);
+    getCard(id: string): CardRecord;
+    getCardByName(type: string, name: string): CardRecord | undefined;
+    getCommits(id: string): List<CommitRecord> | undefined;
+    findCards(cardType: CardTypeRecord, value: string): CardRecord[];
+    sort(a: CardRecord, b: CardRecord, compare: string): number;
+    getCardSuggestions(ref: string, value: string): {
+        label: string;
+    }[];
+    getTagSortIndexByCard(card: CardRecord, tag: CardTagRecord): number;
+    getCount(cardType: string): number;
+    private addCommit(commit);
+}
+declare const _default: CardList;
+export default _default;
