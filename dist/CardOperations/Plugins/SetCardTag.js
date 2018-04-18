@@ -1,42 +1,32 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import * as shortid from 'shortid';
-import CardOperation from '../CardOperation';
-import CardList from '../../CardList';
-import { CardTagRecord } from 'pmpos-models';
-var SetCardTag = /** @class */ (function (_super) {
-    __extends(SetCardTag, _super);
-    function SetCardTag() {
-        var _this = _super.call(this, 'SET_CARD_TAG', 'Set Card Tag') || this;
-        _this.canReduce = _this.canReduceCard;
-        return _this;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const shortid = require("shortid");
+const CardOperation_1 = require("../CardOperation");
+const CardList_1 = require("../../CardList");
+const pmpos_models_1 = require("pmpos-models");
+class SetCardTag extends CardOperation_1.default {
+    constructor() {
+        super('SET_CARD_TAG', 'Set Card Tag');
+        this.canReduce = this.canReduceCard;
     }
-    SetCardTag.prototype.canEdit = function (action) {
+    canEdit(action) {
         return !action.data.value;
-    };
-    SetCardTag.prototype.readConcurrencyData = function (card, data) {
+    }
+    readConcurrencyData(card, data) {
         return card.getIn(['tags', data.name]);
-    };
-    SetCardTag.prototype.tagValueRemoved = function (card, data) {
+    }
+    tagValueRemoved(card, data) {
         return card.tags.has(data.name)
             && card.getTag(data.name, undefined)
             && !data.value;
-    };
-    SetCardTag.prototype.tagAmountRemoved = function (card, data) {
+    }
+    tagAmountRemoved(card, data) {
         return card.tags.has(data.name) && data.func && data.amount === 0;
-    };
-    SetCardTag.prototype.reduce = function (card, data) {
-        var fixedData = this.fixData(data);
+    }
+    reduce(card, data) {
+        let fixedData = this.fixData(data);
         // fixedData = this.fixType(card, fixedData);
-        var r = new CardTagRecord(fixedData);
+        let r = new pmpos_models_1.CardTagRecord(fixedData);
         if (this.tagValueRemoved(card, data)) {
             return card.deleteIn(['tags', data.name]);
         }
@@ -44,12 +34,12 @@ var SetCardTag = /** @class */ (function (_super) {
             return card.deleteIn(['tags', data.name]);
         }
         return card.setIn(['tags', data.name], r);
-    };
-    SetCardTag.prototype.canReduceCard = function (card, action) {
-        var current = this.readConcurrencyData(card, action.data);
+    }
+    canReduceCard(card, action) {
+        let current = this.readConcurrencyData(card, action.data);
         return !current || current.value === action.concurrencyData.value;
-    };
-    SetCardTag.prototype.fixData = function (data) {
+    }
+    fixData(data) {
         if (!Number.isNaN(Number(data.quantity))) {
             data.quantity = Number(data.quantity);
         }
@@ -57,7 +47,7 @@ var SetCardTag = /** @class */ (function (_super) {
             data.amount = Number(data.amount);
         }
         if (!data.typeId && data.type) {
-            var tt = CardList.tagTypes.find(function (x) { return x.name === data.type; });
+            let tt = CardList_1.default.tagTypes.find(x => x.name === data.type);
             // if (!tt) { data.type = ''; } 
             // Should we clear that? If we have a type that never exists it will continously try to fix that.
             if (tt) {
@@ -87,25 +77,25 @@ var SetCardTag = /** @class */ (function (_super) {
                     data.target = tt.defaultTarget;
                 }
                 if (tt.cardTypeReferenceName && data.value) {
-                    var card = CardList.getCardByName(tt.cardTypeReferenceName, data.value);
+                    let card = CardList_1.default.getCardByName(tt.cardTypeReferenceName, data.value);
                     if (card) {
                         if (!data.name) {
                             data.name = tt.cardTypeReferenceName;
                         }
                         if (!data.amount || data.amount === 0) {
-                            var amount = card.getTag('Amount', 0);
+                            let amount = card.getTag('Amount', 0);
                             if (amount) {
                                 data.amount = amount;
                             }
                         }
                         if (!data.source) {
-                            var source = card.getTag('Source', '');
+                            let source = card.getTag('Source', '');
                             if (source) {
                                 data.source = source;
                             }
                         }
                         if (!data.target) {
-                            var target = card.getTag('Target', undefined);
+                            let target = card.getTag('Target', undefined);
                             if (target) {
                                 data.target = target;
                             }
@@ -121,14 +111,14 @@ var SetCardTag = /** @class */ (function (_super) {
             data.id = shortid.generate();
         }
         return data;
-    };
-    SetCardTag.prototype.valueNeeded = function (data, currentValue) {
+    }
+    valueNeeded(data, currentValue) {
         return (!currentValue || !currentValue.value) && (data.name.startsWith('_') || data.typeId);
-    };
-    SetCardTag.prototype.amountNeeded = function (data, currentValue) {
+    }
+    amountNeeded(data, currentValue) {
         return (!currentValue || currentValue.amount === 0) && data.func;
-    };
-    SetCardTag.prototype.valueChanged = function (currentValue, data) {
+    }
+    valueChanged(currentValue, data) {
         if (!currentValue) {
             return true;
         }
@@ -154,9 +144,9 @@ var SetCardTag = /** @class */ (function (_super) {
             return true;
         }
         return false;
-    };
-    SetCardTag.prototype.canApply = function (card, data) {
-        var currentValue = card.getIn(['tags', data.name]);
+    }
+    canApply(card, data) {
+        let currentValue = card.getIn(['tags', data.name]);
         if (!data.name || (this.valueNeeded(data, currentValue) && !data.value)) {
             return false;
         }
@@ -164,38 +154,37 @@ var SetCardTag = /** @class */ (function (_super) {
             return false;
         }
         return this.valueChanged(currentValue, data);
-    };
-    SetCardTag.prototype.processPendingAction = function (action) {
-        var data = action.data;
+    }
+    processPendingAction(action) {
+        let data = action.data;
         data.cardId = '';
         if (!action.data || !action.data.typeId || !action.data.name || !action.data.value) {
             return action.set('data', data);
         }
-        var tagType = CardList.tagTypes.get(data.typeId);
+        let tagType = CardList_1.default.tagTypes.get(data.typeId);
         if (tagType) {
-            var cardType = CardList.getCardTypeByRef(tagType.cardTypeReferenceName);
+            let cardType = CardList_1.default.getCardTypeByRef(tagType.cardTypeReferenceName);
             if (cardType) {
-                var card = CardList.getCardByName(cardType.name, action.data.value);
+                let card = CardList_1.default.getCardByName(cardType.name, action.data.value);
                 data.cardId = card ? card.id : '';
             }
             if (data.source && tagType.sourceCardTypeReferenceName) {
-                var sourceCardType = CardList.getCardTypeByRef(tagType.sourceCardTypeReferenceName);
+                let sourceCardType = CardList_1.default.getCardTypeByRef(tagType.sourceCardTypeReferenceName);
                 if (sourceCardType) {
-                    var sourceCard = CardList.getCardByName(sourceCardType.name, data.source);
+                    let sourceCard = CardList_1.default.getCardByName(sourceCardType.name, data.source);
                     data.sourceCardId = sourceCard ? sourceCard.id : '';
                 }
             }
             if (data.target && tagType.targetCardTypeReferenceName) {
-                var targetCardType = CardList.getCardTypeByRef(tagType.targetCardTypeReferenceName);
+                let targetCardType = CardList_1.default.getCardTypeByRef(tagType.targetCardTypeReferenceName);
                 if (targetCardType) {
-                    var targetCard = CardList.getCardByName(targetCardType.name, data.target);
+                    let targetCard = CardList_1.default.getCardByName(targetCardType.name, data.target);
                     data.targetCardId = targetCard ? targetCard.id : '';
                 }
             }
         }
         return action.set('data', data);
-    };
-    return SetCardTag;
-}(CardOperation));
-export default SetCardTag;
+    }
+}
+exports.default = SetCardTag;
 //# sourceMappingURL=SetCardTag.js.map

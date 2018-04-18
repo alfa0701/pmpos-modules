@@ -1,6 +1,6 @@
 {
   "name": "pmpos-modules",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,6 +17,8 @@
   "dependencies": {
     "immutable": "^4.0.0-rc.9",
     "lodash": "^4.17.5",
+    "nools-ts": "^2.3.5",
+    "pmpos-models": "^1.0.0",
     "shortid": "^2.2.8",
     "y-array": "^11.0.0-5",
     "y-indexeddb": "^9.0.0-5",

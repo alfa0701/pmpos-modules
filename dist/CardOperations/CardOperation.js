@@ -1,9 +1,10 @@
-var CardOperation = /** @class */ (function () {
-    function CardOperation(opType, description) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class CardOperation {
+    constructor(opType, description) {
         this.type = opType;
         this.description = description;
     }
-    return CardOperation;
-}());
-export default CardOperation;
+}
+exports.default = CardOperation;
 //# sourceMappingURL=CardOperation.js.map

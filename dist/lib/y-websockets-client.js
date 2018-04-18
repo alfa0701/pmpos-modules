@@ -1,6 +1,6 @@
-import io from 'socket.io-client'
+let io = require('socket.io-client');
 
-export default function extend(Y) {
+exports.default = function extend(Y) {
     class Connector extends Y.AbstractConnector {
         constructor(y, options) {
             if (options === undefined) {

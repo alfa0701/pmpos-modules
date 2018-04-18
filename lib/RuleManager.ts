@@ -2,7 +2,7 @@ import * as shortid from 'shortid';
 import * as _ from 'lodash';
 import { Map as IMap } from 'immutable';
 import { cardOperations } from './CardOperations/index';
-import * as Nools from './lib/nools-ts.min';
+import * as Nools from 'nools-ts';
 import CardList from './CardList';
 import { CardRecord, RuleRecord, ActionRecord } from 'pmpos-models';
 

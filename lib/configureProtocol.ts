@@ -3,11 +3,14 @@ require('y-array/y-array.js');
 require('y-memory');
 require('y-map');
 require('y-indexeddb')(Y);
+// require('y-websockets-client')(Y);
+
 import yclient from './lib/y-websockets-client';
 
 import { Commit } from 'pmpos-models';
 
 export default (
+    enablePersistence: boolean,
     terminalId: string,
     networkName: string,
     user: string,
@@ -23,7 +26,7 @@ export default (
     onCommitEvent: (commits: Commit[]) => void
 ) => {
     yclient(Y);
-    const persistence = new Y.IndexedDB();
+    const persistence = enablePersistence ? new Y.IndexedDB() : undefined;
 
     let y = new Y(
         networkName, {

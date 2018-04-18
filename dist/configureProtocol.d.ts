@@ -1,5 +1,5 @@
 import { Commit } from 'pmpos-models';
-declare const _default: (terminalId: string, networkName: string, user: string, onConnect: (chatProtocol: any, commitProtocol: any, configProtocol: any) => void, onChatEvent: (messages: {
+declare const _default: (enablePersistence: boolean, terminalId: string, networkName: string, user: string, onConnect: (chatProtocol: any, commitProtocol: any, configProtocol: any) => void, onChatEvent: (messages: {
     time: number;
     message: string;
     user: string;

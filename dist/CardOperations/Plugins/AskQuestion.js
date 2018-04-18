@@ -1,38 +1,28 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import CardOperation from '../CardOperation';
-var AskQuestion = /** @class */ (function (_super) {
-    __extends(AskQuestion, _super);
-    function AskQuestion() {
-        return _super.call(this, 'ASK_QUESTION', 'Ask Question') || this;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const CardOperation_1 = require("../CardOperation");
+class AskQuestion extends CardOperation_1.default {
+    constructor() {
+        super('ASK_QUESTION', 'Ask Question');
     }
-    AskQuestion.prototype.canEdit = function (action) {
+    canEdit(action) {
         return true;
-    };
-    AskQuestion.prototype.canApply = function (card, data) {
+    }
+    canApply(card, data) {
         return !card.isClosed;
-    };
-    AskQuestion.prototype.readConcurrencyData = function (card, actionData) {
+    }
+    readConcurrencyData(card, actionData) {
         return undefined;
-    };
-    AskQuestion.prototype.reduce = function (card, data) {
+    }
+    reduce(card, data) {
         return card;
-    };
-    AskQuestion.prototype.fixData = function (data) {
+    }
+    fixData(data) {
         return data;
-    };
-    AskQuestion.prototype.processPendingAction = function (action) {
+    }
+    processPendingAction(action) {
         return action;
-    };
-    return AskQuestion;
-}(CardOperation));
-export default AskQuestion;
+    }
+}
+exports.default = AskQuestion;
 //# sourceMappingURL=AskQuestion.js.map

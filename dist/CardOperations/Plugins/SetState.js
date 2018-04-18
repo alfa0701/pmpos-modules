@@ -1,42 +1,32 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import CardOperation from '../CardOperation';
-import RuleManager from '../../RuleManager';
-var SetState = /** @class */ (function (_super) {
-    __extends(SetState, _super);
-    function SetState() {
-        return _super.call(this, 'SET_STATE', 'Set State') || this;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const CardOperation_1 = require("../CardOperation");
+const RuleManager_1 = require("../../RuleManager");
+class SetState extends CardOperation_1.default {
+    constructor() {
+        super('SET_STATE', 'Set State');
     }
-    SetState.prototype.canEdit = function (action) {
+    canEdit(action) {
         return false;
-    };
-    SetState.prototype.canApply = function (card, data) {
+    }
+    canApply(card, data) {
         return !card.isClosed;
-    };
-    SetState.prototype.readConcurrencyData = function (card, actionData) {
+    }
+    readConcurrencyData(card, actionData) {
         return undefined;
-    };
-    SetState.prototype.reduce = function (card, data) {
+    }
+    reduce(card, data) {
         if (data.name) {
-            RuleManager.setState(data.name, data.value);
+            RuleManager_1.default.setState(data.name, data.value);
         }
         return card;
-    };
-    SetState.prototype.fixData = function (data) {
+    }
+    fixData(data) {
         return data;
-    };
-    SetState.prototype.processPendingAction = function (action) {
+    }
+    processPendingAction(action) {
         return action;
-    };
-    return SetState;
-}(CardOperation));
-export default SetState;
+    }
+}
+exports.default = SetState;
 //# sourceMappingURL=SetState.js.map
