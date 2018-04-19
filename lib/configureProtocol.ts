@@ -2,10 +2,12 @@ var Y = require('yjs');
 require('y-array/y-array.js');
 require('y-memory');
 require('y-map');
-require('y-indexeddb')(Y);
+//require('y-indexeddb')(Y);
 // require('y-websockets-client')(Y);
 
 import yclient from './lib/y-websockets-client';
+import yindex from './lib/y-indexeddb';
+import yText from './lib/y-textfiledb';
 
 import { Commit } from 'pmpos-models';
 
@@ -26,7 +28,10 @@ export default (
     onCommitEvent: (commits: Commit[]) => void
 ) => {
     yclient(Y);
-    const persistence = enablePersistence ? new Y.IndexedDB() : undefined;
+    yindex(Y);
+    yText(Y);
+
+    let persistence = enablePersistence ? new Y.IndexedDB() : new Y.TextFileDB();
 
     let y = new Y(
         networkName, {

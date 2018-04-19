@@ -4,12 +4,16 @@ var Y = require('yjs');
 require('y-array/y-array.js');
 require('y-memory');
 require('y-map');
-require('y-indexeddb')(Y);
+//require('y-indexeddb')(Y);
 // require('y-websockets-client')(Y);
 const y_websockets_client_1 = require("./lib/y-websockets-client");
+const y_indexeddb_1 = require("./lib/y-indexeddb");
+const y_textfiledb_1 = require("./lib/y-textfiledb");
 exports.default = (enablePersistence, terminalId, networkName, user, onConnect, onChatEvent, onConfigEvent, onCommitEvent) => {
     y_websockets_client_1.default(Y);
-    const persistence = enablePersistence ? new Y.IndexedDB() : undefined;
+    y_indexeddb_1.default(Y);
+    y_textfiledb_1.default(Y);
+    let persistence = enablePersistence ? new Y.IndexedDB() : new Y.TextFileDB();
     let y = new Y(networkName, {
         connector: {
             name: 'websockets-client',

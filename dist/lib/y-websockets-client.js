@@ -1,127 +1,124 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 let io = require('socket.io-client');
-
-exports.default = function extend(Y) {
+function extend(Y) {
     class Connector extends Y.AbstractConnector {
         constructor(y, options) {
             if (options === undefined) {
-                throw new Error('Options must not be undefined!')
+                throw new Error('Options must not be undefined!');
             }
-            options.role = 'slave'
-            options.preferUntransformed = true
-            options.generateUserId = options.generateUserId || false
+            options.role = 'slave';
+            options.preferUntransformed = true;
+            options.generateUserId = options.generateUserId || false;
             if (options.initSync !== false) {
-                options.initSync = true
+                options.initSync = true;
             }
-            super(y, options)
-            this._sentSync = false
-            this.options = options
-            options.url = options.url || 'https://yjs.dbis.rwth-aachen.de:5072'
-            var socket = options.socket || io(options.url, options.options)
-            this.socket = socket
-            var self = this
-
+            super(y, options);
+            this._sentSync = false;
+            this.options = options;
+            options.url = options.url || 'https://yjs.dbis.rwth-aachen.de:5072';
+            var socket = options.socket || io(options.url, options.options);
+            this.socket = socket;
+            var self = this;
             this._onConnect = function () {
                 if (options.initSync) {
                     if (options.room == null) {
-                        throw new Error('You must define a room name!')
+                        throw new Error('You must define a room name!');
                     }
-                    self._sentSync = true
+                    self._sentSync = true;
                     // only sync with server when connect = true
-                    socket.emit('joinRoom', options.room)
-                    self.userJoined('server', 'master')
+                    socket.emit('joinRoom', options.room);
+                    self.userJoined('server', 'master');
                     self.connections.get('server').syncStep2.promise.then(() => {
                         // set user id when synced with server
-                        self.setUserId(Y.utils.generateUserId())
-                    })
+                        self.setUserId(Y.utils.generateUserId());
+                    });
                 }
-                socket.on('yjsEvent', self._onYjsEvent)
-                socket.on('disconnect', self._onDisconnect)
-            }
-
-            socket.on('connect', this._onConnect)
+                socket.on('yjsEvent', self._onYjsEvent);
+                socket.on('disconnect', self._onDisconnect);
+            };
+            socket.on('connect', this._onConnect);
             if (socket.connected) {
-                this._onConnect()
-            } else {
-                socket.connect()
+                this._onConnect();
             }
-
+            else {
+                socket.connect();
+            }
             this._onYjsEvent = function (buffer) {
-                let decoder = new Y.utils.BinaryDecoder(buffer)
-                let roomname = decoder.readVarString()
+                let decoder = new Y.utils.BinaryDecoder(buffer);
+                let roomname = decoder.readVarString();
                 if (roomname === options.room) {
-                    self.receiveMessage('server', buffer)
+                    self.receiveMessage('server', buffer);
                 }
-            }
-
+            };
             this._onDisconnect = function (peer) {
-                socket.off('disconnect', self._onDisconnect)
-                socket.off('yjsEvent', self._onYjsEvent)
-                Y.AbstractConnector.prototype.disconnect.call(self)
-            }
+                socket.off('disconnect', self._onDisconnect);
+                socket.off('yjsEvent', self._onYjsEvent);
+                Y.AbstractConnector.prototype.disconnect.call(self);
+            };
         }
-
         /*
          * Call this if you set options.initSync = false. Yjs will sync with the server after calling this method.
          */
         initSync(opts) {
             if (!this.options.initSync) {
-                this.options.initSync = true
+                this.options.initSync = true;
                 if (opts.room != null) {
-                    this.options.room = opts.room
+                    this.options.room = opts.room;
                 }
             }
             if (this.socket.connected) {
-                this._onConnect()
+                this._onConnect();
             }
         }
-
         disconnect() {
-            this.socket.emit('leaveRoom', this.options.room)
+            this.socket.emit('leaveRoom', this.options.room);
             if (!this.options.socket) {
-                this.socket.disconnect()
+                this.socket.disconnect();
             }
-            super.disconnect()
+            super.disconnect();
         }
         destroy() {
-            this.disconnect()
-            this.socket.off('disconnect', this._onDisconnect)
-            this.socket.off('yjsEvent', this._onYjsEvent)
-            this.socket.off('connect', this._onConnect)
+            this.disconnect();
+            this.socket.off('disconnect', this._onDisconnect);
+            this.socket.off('yjsEvent', this._onYjsEvent);
+            this.socket.off('connect', this._onConnect);
             if (!this.options.socket) {
-                this.socket.destroy()
+                this.socket.destroy();
             }
-            this.socket = null
+            this.socket = null;
         }
         reconnect() {
-            this.socket.connect()
-            super.reconnect()
+            this.socket.connect();
+            super.reconnect();
         }
         send(uid, message) {
             if (this._sentSync) {
-                super.send(uid, message)
-                this.socket.emit('yjsEvent', message)
+                super.send(uid, message);
+                this.socket.emit('yjsEvent', message);
             }
         }
         broadcast(message) {
             if (this._sentSync) {
-                super.broadcast(message)
-                this.socket.emit('yjsEvent', message)
+                super.broadcast(message);
+                this.socket.emit('yjsEvent', message);
             }
         }
         whenRemoteResponsive() {
             return new Promise(resolve => {
-                this.socket.emit('yjsResponsive', this.options.room, resolve)
-            })
+                this.socket.emit('yjsResponsive', this.options.room, resolve);
+            });
         }
         isDisconnected() {
-            return this.socket.disconnected
+            return this.socket.disconnected;
         }
     }
-    Connector.io = io
-    Y['websockets-client'] = Connector
+    Connector.io = io;
+    Y['websockets-client'] = Connector;
     // Y.extend('websockets-client', Connector)
 }
-
+exports.default = extend;
 if (typeof Y !== 'undefined') {
-    extend(Y) // eslint-disable-line
+    extend(Y); // eslint-disable-line
 }
+//# sourceMappingURL=y-websockets-client.js.map
