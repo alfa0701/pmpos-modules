@@ -1,6 +1,6 @@
 {
   "name": "pmpos-modules",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,17 +14,19 @@
     "@types/node": "^9.6.6",
     "typescript": "^2.8.3"
   },
-  "peerDependencies": {
-    "immutable": "^4.0.0-rc.9",
-    "lodash": "^4.17.5",
+  "dependencies": {
     "nools-ts": "^2.3.5",
-    "pmpos-models": "^1.0.1",
-    "shortid": "^2.2.8",
     "y-array": "^11.0.0-5",
     "y-indexeddb": "^9.0.0-5",
     "y-map": "^11.0.0-1",
     "y-memory": "^9.0.0-1",
     "y-websockets-client": "^9.0.0-4",
     "yjs": "^13.0.0-55"
+  },
+  "peerDependencies": {
+    "immutable": "^4.0.0-rc.9",
+    "lodash": "^4.17.5",
+    "pmpos-models": "^1.0.1",
+    "shortid": "^2.2.8"
   }
 }
