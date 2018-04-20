@@ -68,6 +68,7 @@ export default function extendYIndexedDBPersistence(Y) {
       })
     }
     init(y) {
+      console.log('INIT!!!!')
       let cnf = this.ys.get(y)
       let room = y.room
       cnf.db = null

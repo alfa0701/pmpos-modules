@@ -2,8 +2,8 @@
 
 let fs = require('fs');
 const FILE_NAME = './model.db'
-
-const PREFERRED_TRIM_SIZE = 500
+const PREFERRED_TRIM_SIZE = 5;
+let updates = [];
 
 export default function extendYTextFileDBPersistence(Y) {
   class TextFileDBPersistence extends Y.AbstractPersistence {
@@ -11,6 +11,7 @@ export default function extendYTextFileDBPersistence(Y) {
       super(opts)
     }
     init(y) {
+      console.log('init!!!');
       let cnf = this.ys.get(y);
       let room = y.room;
       if (typeof BroadcastChannel !== 'undefined') {
@@ -56,11 +57,17 @@ export default function extendYTextFileDBPersistence(Y) {
         cnf.channel.postMessage(update)
       }
 
-      fs.appendFile(FILE_NAME, new Buffer(update), err => {
-        if (err) {
-          fs.unlink(FILE_NAME, () => {});
-        }
-      });
+      updates.push(update);
+      console.log('updates', updates);
+      if (updates.length >= PREFERRED_TRIM_SIZE) {
+        this.persist(y);
+      }
+
+      // fs.appendFile(FILE_NAME, new Buffer(update), err => {
+      //   if (err) {
+      //     fs.unlink(FILE_NAME, () => {});
+      //   }
+      // });
 
       // let t = cnf.db.transaction(['updates'], 'readwrite')
       // let updatesStore = t.objectStore('updates')
@@ -73,6 +80,37 @@ export default function extendYTextFileDBPersistence(Y) {
       // })
     }
 
+    persist(y) {
+      console.log('persist!');
+      Y.AbstractPersistence.prototype.retrieve.call(this, y, null, updates);
+      let binaryModel = Y.AbstractPersistence.prototype.persist.call(this, y);
+      fs.writeFile(FILE_NAME, new Buffer(binaryModel), err => {
+        if (err) {
+          console.log('error', err);
+          fs.unlink(FILE_NAME, () => {});
+        }
+      });
+      updates = [];
+
+      // let cnf = this.ys.get(y)
+      // let db = cnf.db
+      // let t = db.transaction(['updates', 'model'], 'readwrite')
+      // let updatesStore = t.objectStore('updates')
+      // return rtop(updatesStore.getAll())
+      //   .then(updates => {
+      //     // apply pending updates before deleting them
+      //     Y.AbstractPersistence.prototype.retrieve.call(this, y, null, updates)
+      //     // get binary model
+      //     let binaryModel = Y.AbstractPersistence.prototype.persist.call(this, y)
+      //     // delete all pending updates
+      //     if (updates.length > 0) {
+      //       let modelStore = t.objectStore('model')
+      //       modelStore.put(binaryModel, 0)
+      //       updatesStore.clear()
+      //     }
+      //   })
+    }
+
     saveStruct(y, struct) {
       super.saveStruct(y, struct);
     }
@@ -81,7 +119,10 @@ export default function extendYTextFileDBPersistence(Y) {
       // let cnf = this.ys.get(y)
 
       fs.readFile(FILE_NAME, null, (err, nb) => {
-        if (nb) super.retrieve(y, nb.buffer);
+        let model;
+        if (nb)
+          model = nb.buffer;
+        super.retrieve(y, model, updates);
         // var ab = nb.buffer;
         // console.log(ab); // all is well
         // console.log(new Uint8Array(ab)); // all is well

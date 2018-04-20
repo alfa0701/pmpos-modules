@@ -16,8 +16,8 @@
         "strictNullChecks": true,
         "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": true,
-        "declaration": true,
-        "allowJs": false,
+        "declaration": false,
+        "allowJs": true,
     },
     "exclude": [
         "dist",

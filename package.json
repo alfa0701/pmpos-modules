@@ -1,6 +1,6 @@
 {
   "name": "pmpos-modules",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,10 +11,10 @@
   "author": "Emre Eren <emreeren@gmail.com> (sambapos.com)",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^9.6.5",
-    "typescript": "^2.8.1"
+    "@types/node": "^9.6.6",
+    "typescript": "^2.8.3"
   },
-  "dependencies": {
+  "peerDependencies": {
     "immutable": "^4.0.0-rc.9",
     "lodash": "^4.17.5",
     "nools-ts": "^2.3.5",
