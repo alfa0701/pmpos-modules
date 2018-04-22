@@ -12,7 +12,11 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^9.6.6",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "immutable": "^4.0.0-rc.9",
+    "lodash": "^4.17.5",
+    "pmpos-models": "1.x",
+    "shortid": "^2.2.8"
   },
   "dependencies": {
     "nools-ts": "^2.3.5",
@@ -26,7 +30,7 @@
   "peerDependencies": {
     "immutable": "^4.0.0-rc.9",
     "lodash": "^4.17.5",
-    "pmpos-models": "^1.0.1",
+    "pmpos-models": "1.x",
     "shortid": "^2.2.8"
   }
 }

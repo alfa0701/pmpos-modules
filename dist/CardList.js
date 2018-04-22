@@ -123,16 +123,16 @@ class CardList {
     getCommits(id) {
         return this.commits.get(id);
     }
-    findCards(cardType, value) {
+    findCards(cardType, value, showAllCards = false) {
         const inputValue = value.toLowerCase();
         let index = this.otherIndex.get(cardType.id) || immutable_1.Set();
         let resultItems = [];
-        index.toList().every(i => {
+        index.toArray().every(i => {
             let card = this.cards.get(i);
-            if (card.name.toLowerCase().includes(inputValue)) {
+            if ((showAllCards || !card.isClosed) && card.includes(inputValue)) {
                 resultItems.push(card);
             }
-            return resultItems.length < 100 || inputValue.length > 2;
+            return resultItems.length < 100 || inputValue.length > 3;
         });
         return resultItems.sort((a, b) => this.sort(a, b, inputValue));
     }
