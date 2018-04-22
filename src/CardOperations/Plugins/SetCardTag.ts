@@ -24,8 +24,8 @@ export default class SetCardTag extends CardOperation {
             && !data.value;
     }
 
-    private tagAmountRemoved(card: CardRecord, data: CardTagRecord) {
-        return card.tags.has(data.name) && data.func && data.amount === 0;
+    private tagPriceRemoved(card: CardRecord, data: CardTagRecord) {
+        return card.tags.has(data.name) && data.func && data.price === 0;
     }
 
     reduce(card: CardRecord, data: CardTagRecord): CardRecord {
@@ -35,7 +35,7 @@ export default class SetCardTag extends CardOperation {
         if (this.tagValueRemoved(card, data)) {
             return card.deleteIn(['tags', data.name]);
         }
-        if (this.tagAmountRemoved(card, data)) {
+        if (this.tagPriceRemoved(card, data)) {
             return card.deleteIn(['tags', data.name]);
         }
         return card.setIn(['tags', data.name], r);
@@ -48,7 +48,7 @@ export default class SetCardTag extends CardOperation {
 
     fixData(data: any) {
         if (!Number.isNaN(Number(data.quantity))) { data.quantity = Number(data.quantity); }
-        if (!Number.isNaN(Number(data.amount))) { data.amount = Number(data.amount); }
+        if (!Number.isNaN(Number(data.price))) { data.price = Number(data.price); }
 
         if (!data.typeId && data.type) {
             let tt = CardList.tagTypes.find(x => x.name === data.type);
@@ -66,8 +66,8 @@ export default class SetCardTag extends CardOperation {
                     data.quantity = tt.defaultQuantity;
                 }
                 if (!data.unit && tt.defaultUnit) { data.unit = tt.defaultUnit; }
-                if ((!data.amount || data.amount === 0) && tt.defaultAmount) {
-                    data.amount = tt.defaultAmount;
+                if ((!data.price || data.price === 0) && tt.defaultPrice) {
+                    data.price = tt.defaultPrice;
                 }
                 if (!data.func && tt.defaultFunction) {
                     data.func = tt.defaultFunction;
@@ -84,9 +84,9 @@ export default class SetCardTag extends CardOperation {
                         if (!data.name) {
                             data.name = tt.cardTypeReferenceName;
                         }
-                        if (!data.amount || data.amount === 0) {
-                            let amount = card.getTag('Amount', 0);
-                            if (amount) { data.amount = amount; }
+                        if (!data.price || data.price === 0) {
+                            let price = card.getTag('Price', 0);
+                            if (price) { data.price = price; }
                         }
                         if (!data.source) {
                             let source = card.getTag('Source', '');
@@ -113,8 +113,8 @@ export default class SetCardTag extends CardOperation {
         return (!currentValue || !currentValue.value) && (data.name.startsWith('_') || data.typeId);
     }
 
-    amountNeeded(data: any, currentValue: CardTagRecord): boolean {
-        return (!currentValue || currentValue.amount === 0) && data.func;
+    priceNeeded(data: any, currentValue: CardTagRecord): boolean {
+        return (!currentValue || currentValue.price === 0) && data.func;
     }
 
     valueChanged(currentValue: CardTagRecord, data: any) {
@@ -122,7 +122,7 @@ export default class SetCardTag extends CardOperation {
         if (currentValue.value !== data.value) { return true; }
         if (currentValue.quantity !== data.quantity) { return true; }
         if (currentValue.unit !== data.unit) { return true; }
-        if (currentValue.amount !== data.amount) { return true; }
+        if (currentValue.price !== data.price) { return true; }
         if (currentValue.func !== data.func) { return true; }
         if (currentValue.source !== data.source) { return true; }
         if (currentValue.target !== data.target) { return true; }
@@ -132,7 +132,7 @@ export default class SetCardTag extends CardOperation {
     canApply(card: CardRecord, data: any): boolean {
         let currentValue = card.getIn(['tags', data.name]) as CardTagRecord;
         if (!data.name || (this.valueNeeded(data, currentValue) && !data.value)) { return false; }
-        if (this.amountNeeded(data, currentValue) && data.amount === 0) { return false; }
+        if (this.priceNeeded(data, currentValue) && data.price === 0) { return false; }
         return this.valueChanged(currentValue, data);
     }
     processPendingAction(action: ActionRecord): ActionRecord {

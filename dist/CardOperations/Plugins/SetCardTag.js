@@ -20,8 +20,8 @@ class SetCardTag extends CardOperation_1.default {
             && card.getTag(data.name, undefined)
             && !data.value;
     }
-    tagAmountRemoved(card, data) {
-        return card.tags.has(data.name) && data.func && data.amount === 0;
+    tagPriceRemoved(card, data) {
+        return card.tags.has(data.name) && data.func && data.price === 0;
     }
     reduce(card, data) {
         let fixedData = this.fixData(data);
@@ -30,7 +30,7 @@ class SetCardTag extends CardOperation_1.default {
         if (this.tagValueRemoved(card, data)) {
             return card.deleteIn(['tags', data.name]);
         }
-        if (this.tagAmountRemoved(card, data)) {
+        if (this.tagPriceRemoved(card, data)) {
             return card.deleteIn(['tags', data.name]);
         }
         return card.setIn(['tags', data.name], r);
@@ -43,8 +43,8 @@ class SetCardTag extends CardOperation_1.default {
         if (!Number.isNaN(Number(data.quantity))) {
             data.quantity = Number(data.quantity);
         }
-        if (!Number.isNaN(Number(data.amount))) {
-            data.amount = Number(data.amount);
+        if (!Number.isNaN(Number(data.price))) {
+            data.price = Number(data.price);
         }
         if (!data.typeId && data.type) {
             let tt = CardList_1.default.tagTypes.find(x => x.name === data.type);
@@ -64,8 +64,8 @@ class SetCardTag extends CardOperation_1.default {
                 if (!data.unit && tt.defaultUnit) {
                     data.unit = tt.defaultUnit;
                 }
-                if ((!data.amount || data.amount === 0) && tt.defaultAmount) {
-                    data.amount = tt.defaultAmount;
+                if ((!data.price || data.price === 0) && tt.defaultPrice) {
+                    data.price = tt.defaultPrice;
                 }
                 if (!data.func && tt.defaultFunction) {
                     data.func = tt.defaultFunction;
@@ -82,10 +82,10 @@ class SetCardTag extends CardOperation_1.default {
                         if (!data.name) {
                             data.name = tt.cardTypeReferenceName;
                         }
-                        if (!data.amount || data.amount === 0) {
-                            let amount = card.getTag('Amount', 0);
-                            if (amount) {
-                                data.amount = amount;
+                        if (!data.price || data.price === 0) {
+                            let price = card.getTag('Price', 0);
+                            if (price) {
+                                data.price = price;
                             }
                         }
                         if (!data.source) {
@@ -115,8 +115,8 @@ class SetCardTag extends CardOperation_1.default {
     valueNeeded(data, currentValue) {
         return (!currentValue || !currentValue.value) && (data.name.startsWith('_') || data.typeId);
     }
-    amountNeeded(data, currentValue) {
-        return (!currentValue || currentValue.amount === 0) && data.func;
+    priceNeeded(data, currentValue) {
+        return (!currentValue || currentValue.price === 0) && data.func;
     }
     valueChanged(currentValue, data) {
         if (!currentValue) {
@@ -131,7 +131,7 @@ class SetCardTag extends CardOperation_1.default {
         if (currentValue.unit !== data.unit) {
             return true;
         }
-        if (currentValue.amount !== data.amount) {
+        if (currentValue.price !== data.price) {
             return true;
         }
         if (currentValue.func !== data.func) {
@@ -150,7 +150,7 @@ class SetCardTag extends CardOperation_1.default {
         if (!data.name || (this.valueNeeded(data, currentValue) && !data.value)) {
             return false;
         }
-        if (this.amountNeeded(data, currentValue) && data.amount === 0) {
+        if (this.priceNeeded(data, currentValue) && data.price === 0) {
             return false;
         }
         return this.valueChanged(currentValue, data);
